@@ -30,7 +30,7 @@ seed.view = async function(of, name, args, fragment) {
 	if (of.CurrentView && of.CurrentView.classList.contains(name)) {
 		of.NextView = null;
 		of.CurrentView.args = args;
-		of.CurrentView.onviewenter();
+		if (of.CurrentView.onviewenter) await of.CurrentView.onviewenter(of);
 		return;
 	}
 
@@ -66,7 +66,7 @@ seed.view = async function(of, name, args, fragment) {
 	of.CurrentView = of.NextView;
 	of.CurrentName = name;
 	of.CurrentView.args = args || {};
-	
+
 	if (of.LastView) {
 		if (of.LastView.onviewexit) await of.LastView.onviewexit(of);
 		if (q.setvar) q.setvar(of.id+".view."+of.LastName, "", false);
@@ -89,7 +89,7 @@ seed.view = async function(of, name, args, fragment) {
 	for (let promise of promises) {
 		await promise;
 	}
-	
+
 	if (of.LastView) {
 		if (of.LastView == of.LoadingView) {
 			of.LastView.style.display = "none";
@@ -122,7 +122,7 @@ seed.view.ready = async function(of, id, args) {
 	let saved_view = window.localStorage.getItem(of.id+'.CurrentView');
 	let saved_frag = window.localStorage.getItem(of.id+'.CurrentFrag');
 	let saved_args = {};
-	if (window.localStorage.getItem(of.id+'.CurrentArgs') && 
+	if (window.localStorage.getItem(of.id+'.CurrentArgs') &&
 		window.localStorage.getItem(of.id+'.CurrentArgs') != "undefined") {
 		saved_args = JSON.parse(window.localStorage.getItem(of.id+'.CurrentArgs'));
 	}
